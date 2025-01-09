@@ -14,7 +14,7 @@ library(vtable)
 #install.packages("occupationMeasurement")
 library(occupationMeasurement)
 #devtools::install_github("psyteachr/introdataviz")
-
+library(introdataviz)
 # Data Annotations
 # Due to confidentiality, actual open-ended responses cannot be publicly shared.
 # Instead, we provide de-identified data with categorical and response-related information.
@@ -68,7 +68,7 @@ library(occupationMeasurement)
 #cond2.ends with -ung, -heit, -keit, -nis, -schaft numerical variable, shows how many Derived nouns were used to answer condition 2 question
 
 
-dataset_complete <- read_excel("data/dataset.complete.xlsx")
+dataset.complete <- read_excel("dataset.complete.xlsx")
 
 df_filtered<- dataset.complete %>%
   filter(!is.na(char.count_answer1))
@@ -211,11 +211,11 @@ data_long <- data_long %>%
   mutate(Variable = factor(Variable, levels = rev(c("Nouns", "OccupationTitle", "DerivedNouns", "Adjectives", "StopWords", "Verbs"))))
 
 
- data_bilendi1 <- q1.type.words %>% filter(firma == "bilendi", condition1.english == "job task")
- data_bilendi2 <- q1.type.words %>% filter(firma == "bilendi", condition1.english == "job title")
+data_bilendi1 <- q1.type.words %>% filter(firma == "bilendi", condition1.english == "job task")
+data_bilendi2 <- q1.type.words %>% filter(firma == "bilendi", condition1.english == "job title")
 # # 
- data_forsa1 <- q1.type.words %>% filter(firma == "forsa", condition1.english == "job task")
- data_forsa2 <- q1.type.words %>% filter(firma == "forsa", condition1.english == "job title")
+data_forsa1 <- q1.type.words %>% filter(firma == "forsa", condition1.english == "job task")
+data_forsa2 <- q1.type.words %>% filter(firma == "forsa", condition1.english == "job title")
 
 data_long_summary <- data_long %>%
   group_by(Variable, condition1.english, firma) %>%
@@ -238,7 +238,7 @@ figure2<- ggplot(data = data_long_summary, aes(x = Variable, y = share, fill = c
   geom_bar(position = 'dodge', stat='identity', alpha=0.8) +
   geom_text(aes(label=round(share, 0), color = condition1.english), position=position_dodge(width=0.9), hjust=-0.25, size=4) +
   scale_fill_manual(values = c("#00429d", "#ff9408"), 
-                    name = "Question type") +       
+                    name = "Question type", guide = "none") +       
   scale_color_manual(values = c("#00429d", "#ff9408"), 
                      guide = "none") +
   theme_minimal() +
@@ -256,6 +256,7 @@ figure2<- ggplot(data = data_long_summary, aes(x = Variable, y = share, fill = c
         legend.text = element_text(size = 12),  
         legend.title = element_text(size = 14)) 
 
+figure2
 
 ggsave(file="output/figure2.jpeg", 
        plot=figure2, 
@@ -264,6 +265,16 @@ ggsave(file="output/figure2.jpeg",
 ggsave(file="output/figure2.svg", 
        plot=figure2, 
        height = 5, width = 8, dpi = 300)
+
+
+
+
+
+#The figure shows the percentage of different types of words (e.g., nouns, adjectives) that respondents used 
+#in their answers to the Question 1 variations. Lighter gray bars show the percentages for answers to 
+#Job Title question (Question 1"Title"), while darker gray bars show the percentages for answers to 
+#Occupational Task question (Question 1"Task")
+
 
 #calculate the Fisher's test for difference between categories
 
@@ -336,7 +347,7 @@ p<-ggplot(df_filtered1, aes(x = "", y = char.count_answer1, fill = condition1.en
   scale_x_discrete(name = "", expand = c(rain_height*3, 0, 0, 0.7)) +
   coord_flip() +
   scale_fill_manual(values = c("#00429d", "#ff9408"), 
-                    name = "Question type")+
+                    name = "Question type", guide = "none")+
   scale_color_manual(values = c("#00429d", "#ff9408"))+
   theme_minimal() +
   theme(panel.grid.major.y = element_blank(),
@@ -382,6 +393,9 @@ ggsave(file="output/figure3.svg",
        height = 5, width = 8, dpi = 300)
 
 
+ggsave(file="output/figure3.pdf", 
+       plot=p.length, 
+       height = 5, width = 8, dpi = 300)
 ############################ TTR ratio
 #THis part of the code relies on calculating actual tockens, and can not be executed without verbatims, that we can not include in a public dataset due to privacy
 # We however provide results of the analysis where possible
@@ -698,9 +712,9 @@ p<-ggplot(data_q2, aes(x = "", y = char.count_answer2, fill = condition2.english
                position = position_nudge(x = rain_height * 3)) +
   scale_x_discrete(name = "", expand = c(rain_height*3, 0, 0, 0.7)) +
   coord_flip() +
-  scale_fill_manual(values = c("#00429d", "#ff9408"), 
-                    name = "Question type")+
-  scale_color_manual(values = c("#00429d", "#ff9408"))+
+  scale_fill_manual(values = c("#32CD32", "#9370DB"), 
+                    name = "Question type", guide = "none") +
+  scale_color_manual(values = c("#32CD32", "#9370DB"))+
   theme_minimal() +
   theme(panel.grid.major.y = element_blank(),
         legend.position = c(0.8, 0.5),
@@ -746,7 +760,9 @@ ggsave(file="output/figure4.svg",
        plot=p.length.q2, 
        height = 5, width = 8, dpi = 300)
 
-
+ggsave(file="output/figure4.pdf", 
+       plot=p.length.q2, 
+       height = 5, width = 8, dpi = 300)
 ############################################################ here we classify words
 
 
@@ -775,7 +791,7 @@ data_long <- data_long %>%
                                           "Verbs", "DerivedNouns", 
                                           "Adjectives", "OccupationTitle")))) %>%
   mutate(condition2.english=factor(condition2.english, 
-                                 levels=c("no example", "example")))
+                                   levels=c("no example", "example")))
 
 data_long_summary <- data_long %>%
   group_by(Variable, condition2.english, firma) %>%
@@ -789,9 +805,9 @@ data_long_summary$condition2.english <-
 figure5<-ggplot(data = data_long_summary, aes(x = Variable, y = count, fill = condition2.english)) +
   geom_bar(position = 'dodge', stat='identity', alpha=0.8) +
   geom_text(aes(label=round(count, 1), color = condition2.english), position=position_dodge(width=0.9), hjust=-0.25, size=3) +
-  scale_fill_manual(values = c("#00429d", "#ff9408"), 
-                    name = "Question type") +       
-  scale_color_manual(values = c("#00429d", "#ff9408"), 
+  scale_fill_manual(values = c("#32CD32", "#9370DB"), 
+                    name = "Question type", guide = "none") +       
+  scale_color_manual(values = c("#32CD32", "#9370DB"), 
                      guide = "none") +
   theme_minimal() +
   coord_flip() +
@@ -805,6 +821,7 @@ figure5<-ggplot(data = data_long_summary, aes(x = Variable, y = count, fill = co
   theme(axis.text.x = element_text(size = 8),  # Set the size for the x-axis labels
         axis.text.y = element_text(size = 14))  # S
 
+figure5
 ggsave(file="output/figure5.jpeg", 
        plot=figure5, 
        height = 5, width = 8, dpi = 300)
@@ -813,7 +830,9 @@ ggsave(file="output/figure5.svg",
        plot=figure5, 
        height = 5, width = 8, dpi = 300)
 
-
+ggsave(file="output/figure5.pdf", 
+       plot=figure5, 
+       height = 5, width = 8, dpi = 300)
 ############################ some examples for the appendix fig 2a:
 
 #Because it also relies on actual dataset containing open-ended answers, we can not put it in the public domain
@@ -944,7 +963,7 @@ ttr2<-dataset.complete %>%
   filter(!is.na(char.count_answer2))
 
 calculate_ttr(ttr2$answer.condition2[ttr2$firma=="forsa" 
-                                            & ttr2$condition2.english=="example"])
+                                     & ttr2$condition2.english=="example"])
 calculate_ttr(ttr2$answer.condition2[ttr2$firma=="forsa" & 
                                        ttr2$condition2.english=="no example"])
 calculate_ttr(ttr2$answer.condition2[ttr2$firma=="bilendi" 
